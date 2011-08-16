@@ -63,29 +63,31 @@ if (!$.fx.step.backgroundPosition) {
                 width: img.width(),
                 height: img.height()
             });
-            eventSource.mouseenter(showMagnifier)
-                        .mouseleave(hideMagnifier)
-                        .mousemove(_.debounce(position, 100));
+            eventSource.mouseenter(onShow)
+                        .mouseleave(onHide)
+                        .mousemove(_.debounce(onPosition, 100));
         }
         
         function onResize() {
-           eventSource.css({                
-                left: img.offset().left,
-                top: img.offset().top,
-                "z-index": 999
-            }); 
+           if(eventSource) {
+               eventSource.css({
+                       left: img.offset().left,
+                       top: img.offset().top,
+                       "z-index": 999
+                   });
+           }
         }
         
-        function showMagnifier(e) {
+        function onShow(e) {
             magnifier.css({ left: e.pageX, top: e.pageY });
             magnifier.animate({ opacity: 1 });
         }
         
-        function hideMagnifier() {
+        function onHide() {
             magnifier.animate({ opacity: 0 });   
         }
                
-        function position(e) {
+        function onPosition(e) {
             var offset = img.offset();
             var backLeft = Math.round((e.pageX - offset.left) * (-1 / settings.scale));
             var backTop = Math.round((e.pageY - offset.top) * (-1 / settings.scale));
