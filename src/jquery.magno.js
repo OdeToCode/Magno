@@ -83,14 +83,14 @@ if (!$.fx.step.backgroundPosition) {
         function hideMagnifier() {
             magnifier.animate({ opacity: 0 });   
         }
-        
+               
         function position(e) {
             var offset = img.offset();
-            var percentageLeft = Math.round(100 * (e.pageX - offset.left) / img.width());
-            var percentageTop = Math.round(100 * (e.pageY - offset.top) / img.height());
+            var percentageLeft = Math.floor(100 * (e.pageX - offset.left) / img.width());
+            var percentageTop = Math.floor(100 * (e.pageY - offset.top) / img.height());
             magnifier.animate({
-                left: e.pageX,
-                top: e.pageY,
+                left: e.pageX - (settings.size/2),
+                top: e.pageY - (settings.size/2),
                 "backgroundPosition": percentageLeft + "% " + percentageTop + "%"
             });
         }
