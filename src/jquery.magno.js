@@ -23,7 +23,7 @@ if (!$.fx.step.backgroundPosition) {
 (function ($) {
 
     $.fn.magno = function (options) {
-
+       
         var img = $(this);
         var magnifier = null;
         var settings = {
@@ -47,13 +47,11 @@ if (!$.fx.step.backgroundPosition) {
             var src = settings.src || img.attr("src");
             magnifier = makeEmptyDiv();
             magnifier.css({
-                position: "absolute",
-                padding: 0, margin: 0, border: 0,
-                left: img.offset().left,
-                top: img.offset().right,
-                opacity: 0,
-                width: settings.size,
-                height: settings.size,
+                position: "absolute", padding: 0, margin: 0, border: 0, opacity: 0,
+                width: settings.size, height: settings.size,
+                left: img.offset().left, top: img.offset().right,                
+                "-moz-border-radius": settings.size * .5 + "px", 
+                "border-radius": settings.size * .5 + "px",                
                 "background-image": "url(" + src + ")",
                 "background-repeat": "no-repeat",
                 "z-index": 998
@@ -86,12 +84,14 @@ if (!$.fx.step.backgroundPosition) {
                
         function position(e) {
             var offset = img.offset();
-            var percentageLeft = Math.floor(100 * (e.pageX - offset.left) / img.width());
-            var percentageTop = Math.floor(100 * (e.pageY - offset.top) / img.height());
+            var backLeft = (e.pageX - offset.left) * (-1 / settings.scale);
+            var backTop = (e.pageY - offset.top) * (-1 / settings.scale);
+            backLeft += settings.size / 2;
+            backTop += settings.size / 2;
             magnifier.animate({
                 left: e.pageX - (settings.size/2),
                 top: e.pageY - (settings.size/2),
-                "backgroundPosition": percentageLeft + "% " + percentageTop + "%"
+                "backgroundPosition": backLeft + "px " + backTop + "px"              
             });
         }
         
