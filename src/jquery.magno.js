@@ -1,4 +1,26 @@
-﻿(function ($) {
+﻿//
+// magno 0.0.1
+// Copyright (c) 2011 K. Scott Allen OdeToCode LLC
+// Freely distributable under the MIT license.
+// http://www.opensource.org/licenses/MIT
+//
+// requires: jQuery
+//           Underscore
+//           jQuery.backgroundPosition
+
+if(!jQuery) {
+    throw "jQuery required";
+}
+
+if(!_) {
+    throw "Underscore.js required";
+}
+
+if (!$.fx.step.backgroundPosition) {
+    throw "jQuery.backgroudPosition required";
+}
+
+(function ($) {
 
     var settings = {
         opacity: 0.8,
@@ -85,9 +107,11 @@
     };
 
     $.fn.magno = function (options) {
+    
         options = $.extend({}, settings, options);
         return this.each(function () {
             new Magno($(this), options);
         });
     };
+    
 })(jQuery);
