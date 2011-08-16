@@ -22,17 +22,10 @@ if (!$.fx.step.backgroundPosition) {
 
 (function ($) {
 
-    $.fn.magno = function (options) {
-       
-        var img = $(this);
+    function magno(img, settings) {
         var magnifier = null;
-        var settings = {
-            opacity: 0.8,
-            scale: 0.8,
-            size: 200,
-            src: null
-        };        
-
+        var eventSource = null;
+            
         function onLoad() {
             img.css({
                 opacity: settings.opacity,
@@ -59,8 +52,10 @@ if (!$.fx.step.backgroundPosition) {
         }
         
         function makeEventSource() {
-            var eventSource = makeEmptyDiv();
+            eventSource = makeEmptyDiv();
             eventSource.css({
+                "background-color": "#000", // luv you too, IE9
+                opacity: 0,
                 position: "absolute",
                 left: img.offset().left,
                 top: img.offset().top,
@@ -69,8 +64,16 @@ if (!$.fx.step.backgroundPosition) {
                 height: img.height()
             });
             eventSource.mouseenter(showMagnifier)
-                       .mouseleave(hideMagnifier)
-                       .mousemove(_.debounce(position, 200));
+                        .mouseleave(hideMagnifier)
+                        .mousemove(_.debounce(position, 100));
+        }
+        
+        function onResize() {
+           eventSource.css({                
+                left: img.offset().left,
+                top: img.offset().top,
+                "z-index": 999
+            }); 
         }
         
         function showMagnifier(e) {
@@ -84,15 +87,15 @@ if (!$.fx.step.backgroundPosition) {
                
         function position(e) {
             var offset = img.offset();
-            var backLeft = (e.pageX - offset.left) * (-1 / settings.scale);
-            var backTop = (e.pageY - offset.top) * (-1 / settings.scale);
-            backLeft += settings.size / 2;
-            backTop += settings.size / 2;
+            var backLeft = Math.round((e.pageX - offset.left) * (-1 / settings.scale));
+            var backTop = Math.round((e.pageY - offset.top) * (-1 / settings.scale));
+            backLeft += Math.round(settings.size / 2);
+            backTop += Math.round(settings.size / 2);
             magnifier.animate({
                 left: e.pageX - (settings.size/2),
                 top: e.pageY - (settings.size/2),
                 "backgroundPosition": backLeft + "px " + backTop + "px"              
-            });
+            });            
         }
         
         function makeEmptyDiv() {
@@ -100,11 +103,28 @@ if (!$.fx.step.backgroundPosition) {
             $("body").append(div);
             return div;
         }
+
+        function ensureImageLoaded() {
+            img.attr("src", img.attr("src")).load(onLoad);
+            $(window).resize(onResize);
+        }        
+        
+        ensureImageLoaded();                
+    }
+    
+    $.fn.magno = function (options) {
+                
+        var settings = {
+            opacity: 0.8,
+            scale: 0.8,
+            size: 200,
+            src: null
+        };        
                 
         $.extend(settings, options);
         
-        return this.each(function () {            
-            img.load(onLoad);
+        return this.each(function () {
+            magno($(this), settings);
         });
     };
     
